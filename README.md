@@ -7,7 +7,8 @@ Si vous n'avez aucune notion d'aucun langage de programmation, je vous recommand
 [JavaSript éloquent](https://fr.eloquentjavascript.net/contents.html) 	(Très bien fait avec tests directement dans la page)  
 
 [W3schools JS - Complet mais en anglais](https://www.w3schools.com/js/) 	
-[Cours textes ou vidéos](http://pierre-giraud.com/javascript/cours-complet/javascript-presentation.php) 
+
+[Tutos ou vidéos (fr)](http://pierre-giraud.com/javascript/cours-complet/javascript-presentation.php) 
 	
 # Installation : 
 Cliquer sur "Clone or download" puis "Download ZIP"
