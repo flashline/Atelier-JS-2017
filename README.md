@@ -1,7 +1,7 @@
 ﻿# Atelier Silex  22 mars 2017  (fr)
 #  - Et si on programmait des petits jeux -  
 
-Atelier pour débutants et faux débutants en JavaScript.
+Atelier JavaScript pour tous.
 Connaître les bases d'Html et Css.  
 
 Si vous n'avez aucune notion d'aucun langage de programmation, je vous recommande de lire les premiers chapitres de:
