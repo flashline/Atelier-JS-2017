@@ -6,7 +6,6 @@
 
 //
 /// util func
-/// util func
 function displayLegend () {
 	log("Utiliser ");
 	log("  les flèches gauche et droite pour déplacer le canon.");
