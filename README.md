@@ -1,4 +1,4 @@
-﻿# Atelier Silex  22 mars 2017  (fr)
+﻿# Atelier Silex  19 Avril 2017  (fr)
 #  - Et si on programmait des petits jeux -  
 
 Atelier JavaScript pour tous.
@@ -16,5 +16,6 @@ Si vous n'avez aucune notion d'aucun langage de programmation, je vous recommand
 Cliquer sur "Clone or download" puis "Download ZIP"
 
 Si vous n'avez pas d'éditeur de texte installez : [http://www.flashdevelop.org/](http://www.flashdevelop.org/)
+Sous Linux/Mac vous pouvez également utiliser [SublimeText] (https://www.sublimetext.com/ "Link to Sublime")  
 
 [Apix](http://www.pixaline.net/) for [Silexlabs.org](http://www.silexlabs.org/)
