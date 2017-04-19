@@ -17,5 +17,10 @@ Cliquer sur "Clone or download" puis "Download ZIP"
 
 Si vous n'avez pas d'éditeur de texte installez : [http://www.flashdevelop.org/](http://www.flashdevelop.org/)
 Sous Linux/Mac vous pouvez également utiliser [SublimeText] (https://www.sublimetext.com/ "Link to Sublime")  
-
+	
+# Liens :
+[jeux](http://www.pixaline.net/intra/atelier2017/)
+  
+  
+	
 [Apix](http://www.pixaline.net/) for [Silexlabs.org](http://www.silexlabs.org/)
