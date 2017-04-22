@@ -11,5 +11,5 @@ function log (v) {
 	get("#info").innerHTML+=v+"<br/>";
 }
 function get(s) {
-	return document.querySelectorAll(s)[0];	
+	return document.querySelector(s);	
 }
