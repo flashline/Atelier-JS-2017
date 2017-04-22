@@ -1,3 +1,4 @@
+//Other way to do the same prog.
 // classes
 var Canon=function (ec,eb,ox,oy) {
 	this.elem=ec;	
