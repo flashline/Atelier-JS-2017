@@ -1,9 +1,14 @@
 //
 // main
-
+/// target
+/// canon
+/// ball
 //
 // functions
-
+/// listeners
+/// target
+/// canon
+/// ball
 //
 /// util func
 function displayLegend () {
