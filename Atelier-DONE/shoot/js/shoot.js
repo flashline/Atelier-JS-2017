@@ -144,7 +144,7 @@ function log (o) {
 	get("#info").innerHTML+=o+"<br/>";
 }
 function get (s) {
-	return document.querySelectorAll(s)[0];	
+	return document.querySelector(s);	
 }
 /*
 log("target.rectangle.xStart="+target.rectangle.xStart);
