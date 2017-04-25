@@ -1,82 +1,99 @@
 // classes
-var Canon=function (ec,eb,ox,oy) {
-	this.elem=ec;	
-	this.ballProtoElem=eb;
-	this.ox=ox;
-	this.oy=oy;
-	//
+/**
+* Target
+*
+* @param 	el 	prototype element of <div> target
+* @param 	x	left pos
+* @param 	y	top position
+*/
+var Target=function (el,x,y) {
+	var elem=el.cloneNode();	
+	var length=10 ; 
+	this.rectangle=new Rectangle(x,y,length,length);		
+	elem.style.display="block";
+	get("#main").appendChild(elem);
+	elem.style.left=x+"px";
+	elem.style.top=y+"px";
+}
+/**
+* Canon class
+*
+* @param 	elem 			element of <div> canon
+* @param 	ballProtoElem	prototype element of <div> ball
+* @param 	ox				canon x pos -used to set origin ball position
+* @param 	oy				canon y pos -used to set origin ball position
+*/
+var Canon=function (elem,ballProtoElem,ox,oy) {
 	this.alpha=0;
-	this.num=0;
+	var num=0;
+	var sin; var cos;
 	this.onBallMove=null;	
 	this.move=function (d) {
-		this.alpha+=d;this.radian = this.alpha * Math.PI / 180;
-		this.cos=Math.cos(this.radian);
-		this.sin=Math.sin(this.radian);	
-		this.refresh();
+		this.alpha+=d; 
+		var radian = this.alpha * Math.PI / 180;
+		sin=Math.sin(radian);	
+		cos=Math.cos(radian);
+		refresh(this.alpha);
 	};
-	this.refresh=function () {
-		this.elem.style.transform="rotate("+this.alpha+"deg)";
-	};	
-	this.shoot=function (s) {
-		this.num+=1;
-		var el=this.createBallAsset();
-		var ball=new Ball(s,el,this.cos,this.sin);
+	this.shoot=function (speed) {
+		num+=1;
+		var ball=new Ball(speed,createBallAsset(ballProtoElem),sin,cos);
 		ball.onMove=this.onBallMove;
-		ball.x=this.ox;ball.y=this.oy;
-		ball.num=this.num;
-		ball.refresh();
-		ball.go();
+		ball.x=ox;ball.y=oy;
+		ball.num=num;
+		ball.refresh(this.alpha);
+		ball.go(CANON_BALL_PERIOD);
 	};
-	this.createBallAsset=function () {
-		var el=this.ballProtoElem.cloneNode();
+	function refresh (alpha) {
+		elem.style.transform="rotate("+alpha+"deg)";
+	};	
+	function createBallAsset (ballProtoElem) {
+		var el=ballProtoElem.cloneNode();
 		el.style.display="block";
-		el.id="ball_"+this.num;
+		el.id="ball_"+num;
 		get("#main").appendChild(el);
 		return el;
 	};	
 	this.move(0);
 }
-var Ball=function (s,eb,cos,sin) {
-	this.speed=s;
-	this.elem=eb;	
-	this.cos=cos;
-	this.sin=sin;	
+/**
+* Ball class
+*
+* @param 	speed 	speed (nb of pixels for each loop)
+* @param 	elem	element <div> for this ball
+* @param 	sin		sin of the movement orientation
+* @param 	cos		cos of the movement orientation
+*/
+var Ball=function (speed,elem,sin,cos) {
+	this.x;
+	this.y;
 	this.num;
+	var loopId;
 	this.rectangle=new Rectangle(0,0,14,14);
-	this.go=function () {
-		this.loopId = setInterval(this.move.bind(this),1);
-	};
-	this.move=function () {
-		this.x+=this.sin*this.speed;
-		this.y+=this.cos*this.speed*-1;
-		this.refresh();
-		this.rectangle.move(this.x+8,this.y+8);
-		if (this.onMove!=null) this.onMove(this);
-		if (this.y<=0)  this.cos=-this.cos;
-		if (this.x>=570 || this.x<=0 ) this.sin=-this.sin;
-		if (this.y>=400)  this.remove(); 
-		
+	this.go=function (period) {
+		loopId = setInterval(move.bind(this),period);
 	};
 	this.remove=function () {
 		this.stop();
-		get("#main").removeChild(this.elem);
+		get("#main").removeChild(elem);
 	};
 	this.stop=function () {
-		clearInterval(this.loopId);
+		clearInterval(loopId);
 	};
 	this.refresh=function () {
-		this.elem.style.left=""+this.x+"px";
-		this.elem.style.top=""+this.y+"px";
+		elem.style.left=""+this.x+"px";
+		elem.style.top=""+this.y+"px";
 	};	
-}
-var Target=function (el,x,y) {
-	this.elem=el.cloneNode();	
-	var length=10 ;
-	this.rectangle=new Rectangle(x,y,length,length);
-	this.elem.style.display="block";
-	get("#main").appendChild(this.elem);
-	this.elem.style.left=""+x+"px";
-	this.elem.style.top=""+y+"px";
+	function move () {
+		this.x+=sin*speed;
+		this.y+=cos*speed*-1;
+		this.refresh();
+		this.rectangle.move(this.x+8,this.y+8);
+		if (this.onMove!=null) this.onMove(this);
+		if (this.y<=0)  cos=-cos;
+		if (this.x>=570 || this.x<=0 ) sin=-sin;
+		if (this.y>=400) this.remove(); 
+	};	
 }
 var Rectangle=function (x,y,w,h) {
 	this.width=w;
@@ -90,8 +107,10 @@ var Rectangle=function (x,y,w,h) {
 	this.move(x,y);
 }
 // main
-var ROTATE_STEP=1 ; var CANON_BALL_SPEED=1 ; var SCENE_WIDTH=600 ; var SCENE_HEIGHT=200 ; var SCENE_MARGIN=25 ; var TARGET_WIDTH=20 ;
-var canon=new Canon(get("#canon"),get("#ballProto"),285,315) ;
+var ROTATE_STEP=1 ; var CANON_BALL_SPEED=2 ; var CANON_BALL_PERIOD=1000/150 ; 
+var CANON_X=285 ; var CANON_Y=315 ; 
+var SCENE_WIDTH=600 ; var SCENE_HEIGHT=200 ; var SCENE_MARGIN=25 ; var TARGET_WIDTH=20 ;
+var canon=new Canon(get("#canon"),get("#ballProto"),CANON_X,CANON_Y) ;
 document.addEventListener('keydown',onKeyDown,false);
 log("Viser la cible verte en utilisant :");
 log("  flèches gauche et droite pour la rotation du canon.");
@@ -100,8 +119,8 @@ var x=Math.floor(Math.random() * (SCENE_WIDTH  - SCENE_MARGIN - TARGET_WIDTH ) 	
 var y=Math.floor(Math.random() * (SCENE_HEIGHT - SCENE_MARGIN) 					+ SCENE_MARGIN );
 var target=new Target(get("#targetProto"),x,y);
 // listeners
-canon.onBallMove = function (ball) {
-	if ( isCollision (target.rectangle,ball.rectangle) ) {		
+canon.onBallMove = function (ball) {		
+	if ( isCollision (target.rectangle,ball.rectangle) ) {			
 		ball.stop();
 		document.removeEventListener('keydown',onKeyDown,false);
 		displayYouWin(ball);			
@@ -109,16 +128,11 @@ canon.onBallMove = function (ball) {
 }
 function onKeyDown (e) {	
 	//left
-	if (e.keyCode==37 && canon.alpha-ROTATE_STEP>-90) {
-		canon.move(-ROTATE_STEP);
-	}
+	if (e.keyCode==37 && canon.alpha-ROTATE_STEP>-90) canon.move(-ROTATE_STEP);
 	//right
-	else if (e.keyCode==39 && canon.alpha+ROTATE_STEP<90) {
-		canon.move(+ROTATE_STEP);
-	}	
-	else if (e.keyCode==32 || e.keyCode==38 ) {
-		canon.shoot(CANON_BALL_SPEED); //canon.shoot(Math.floor(Math.random() * CANON_BALL_SPEED + 3));		
-	}
+	else if (e.keyCode==39 && canon.alpha+ROTATE_STEP<90) canon.move(+ROTATE_STEP);
+	//shoot
+	else if (e.keyCode==32 || e.keyCode==38 ) canon.shoot(CANON_BALL_SPEED);
 }
 //func
 function displayYouWin(ball) {
