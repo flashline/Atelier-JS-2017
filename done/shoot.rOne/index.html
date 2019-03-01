@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+       <meta charset="utf-8" />
+       <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />		
+		<!--  ADD HERE THE WEB APP CSS CODE -->
+		<link rel="stylesheet" type="text/css" href="css/index.css" /> 
+		<title>Shooting rOne</title>
+    </head>
+    <body>	
+		
+        <div id="main" class="main">  			
+			<div>
+				<span class="label">Game duration : </span>
+				<span id="time" class="outText">0</span>
+				<span class="label">sec.</span>
+				<span class="gap"></span>
+				<span class="label">Successful shootings : </span>
+				<span id="success" class="outText">0</span>
+				<span class="gap"></span>
+				<span class="label">Score</span>
+				<span id="score" class="outText">0</span>
+				<!--<span class="label">%</span>-->
+				<hr/>
+			</div>
+			<div id="gameOver" class="gameOver">
+				<span class="level">Level : </span><span class="level" id="level"></span>
+				<br/><span>GAME OVER !</span>
+				<br/><span class="maxScore">Best score : </span><span class="maxScore" id="maxScore"></span></div>
+			<div id="target" class="target"></div>
+			<div id="canon" class="canon"></div>
+			<div id="ballProto" class="ball"></div>
+			<div id="bang" class="bang"></div>
+			<div id="win" >Win !</div>
+        </div>
+		<div id="buttons"><button id="play" type="button">Play</button> </div>
+		<div id="info"></div>
+        <script type="text/javascript" src="js/shoot.js"></script> <!-- -->
+    </body>
+</html>

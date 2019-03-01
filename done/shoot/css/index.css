@@ -1,0 +1,92 @@
+html {font-size: 100%;}
+* {
+  font-family : Arial, Helvetica, sans-serif;
+  font-size : 1.05em;
+}	
+body {
+	position:relative;
+	width:100%;
+	margin:auto;
+}
+
+
+#main {
+	position:relative;
+	width:600px;
+	height:400px;	
+	margin:auto;
+	overflow:hidden;
+	background-color:#eee;
+	display:block;
+
+}
+.canon {
+	position:absolute;
+	top:330px;
+	left:285px;
+	width:30px;
+	height:70px;	
+	background-color:#0f0;
+	display:block;
+	border-top-left-radius:20% ;
+	border-top-right-radius:20% ;/**/
+}
+#canon {		
+	background-color:#000;
+	display:block;
+	-webkit-transform-origin: center top; 
+	transform-origin: center top; 
+	/*
+   
+	transform:rotate(45deg);	
+	*/
+}
+.ball {
+	position:absolute;
+	top:315px;
+	left:285px;
+	width:14px;
+	height:14px;
+	background-color:transparent;/**/
+	display:block;
+	
+	border-radius: 50%; 
+	border-style:solid;
+	border-color:#f00;
+	border-width:1px;
+	
+}
+.target {
+	position:absolute;
+	width:10px;
+	height:10px;	
+	background-color:#0f0;
+	display:none;
+	/*border-radius: 50%; */
+}
+.msg {
+	position:relative;
+	color:#262;
+	text-align:center;
+	top:180px;
+	width:300px;
+	height:200px;	
+	margin:auto;
+	background-color:rgba(0,0,0,.1);
+	display:none;
+	border:solid 1px white;	
+	overflow:hidden;
+}
+#info {
+	padding:10px;
+}
+#ballProto {	
+	display:none;
+}
+hr {
+	
+                                                                    
+hr.clear {
+	clear: both;
+	visibility: hidden;
+}
