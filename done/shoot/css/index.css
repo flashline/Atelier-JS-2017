@@ -47,12 +47,14 @@ body {
 	left:285px;
 	width:14px;
 	height:14px;
-	background-color:transparent;
+	background-color:transparent;/**/
 	display:block;
+	
 	border-radius: 50%; 
 	border-style:solid;
 	border-color:#f00;
-	border-width:8px;
+	border-width:1px;
+	
 }
 .target {
 	position:absolute;
@@ -60,11 +62,11 @@ body {
 	height:10px;	
 	background-color:#0f0;
 	display:none;
-	border-radius: 50%; 
+	/*border-radius: 50%; */
 }
 .msg {
 	position:relative;
-	color:#0d0;
+	color:#262;
 	text-align:center;
 	top:180px;
 	width:300px;

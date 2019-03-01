@@ -8,8 +8,7 @@
 */
 var Target=function (el,x,y) {
 	var elem=el.cloneNode();	
-	var length=10 ; 
-	this.rectangle=new Rectangle(x,y,length,length);		
+	this.rectangle=new Rectangle(x,y,TARGET_COLISION_SIDE,TARGET_COLISION_SIDE);		
 	elem.style.display="block";
 	get("#main").appendChild(elem);
 	elem.style.left=x+"px";
@@ -69,7 +68,7 @@ var Ball=function (speed,elem,sin,cos) {
 	this.y;
 	this.num;
 	var loopId;
-	this.rectangle=new Rectangle(0,0,14,14);
+	this.rectangle=new Rectangle(0,0,BALL_COLISION_SIDE,BALL_COLISION_SIDE);
 	this.go=function (period) {
 		loopId = setInterval(move.bind(this),period);
 	};
@@ -88,7 +87,7 @@ var Ball=function (speed,elem,sin,cos) {
 		this.x+=sin*speed;
 		this.y+=cos*speed*-1;
 		this.refresh();
-		this.rectangle.move(this.x+8,this.y+8);
+		this.rectangle.move(this.x,this.y);
 		if (this.onMove!=null) this.onMove(this);
 		if (this.y<=0)  cos=-cos;
 		if (this.x>=570 || this.x<=0 ) sin=-sin;
@@ -107,9 +106,9 @@ var Rectangle=function (x,y,w,h) {
 	this.move(x,y);
 }
 // main
-var ROTATE_STEP=1 ; var CANON_BALL_SPEED=2 ; var CANON_BALL_PERIOD=1000/150 ; 
-var CANON_X=285 ; var CANON_Y=315 ; 
-var SCENE_WIDTH=600 ; var SCENE_HEIGHT=200 ; var SCENE_MARGIN=25 ; var TARGET_WIDTH=20 ;
+const ROTATE_STEP=1 ; const CANON_BALL_SPEED=6 ; const CANON_BALL_PERIOD=1000/150 ; 
+const CANON_X=285 ; const CANON_Y=315 ; const BALL_COLISION_SIDE=14+2 ; const TARGET_COLISION_SIDE=10-2 ; 
+const SCENE_WIDTH=600 ; const SCENE_HEIGHT=200 ; const SCENE_MARGIN=25 ; const TARGET_WIDTH=20 ;
 var canon=new Canon(get("#canon"),get("#ballProto"),CANON_X,CANON_Y) ;
 document.addEventListener('keydown',onKeyDown,false);
 log("Viser la cible verte en utilisant :");
@@ -123,7 +122,7 @@ canon.onBallMove = function (ball) {
 	if ( isCollision (target.rectangle,ball.rectangle) ) {			
 		ball.stop();
 		document.removeEventListener('keydown',onKeyDown,false);
-		displayYouWin(ball);			
+		displayYouWin(ball);		
 	}
 }
 function onKeyDown (e) {	
