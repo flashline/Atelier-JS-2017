@@ -52,7 +52,7 @@ body {
 	display:inline-block;
 	width:12px;
 }
-.gameOver #level {
+.gameOver #endLevel {
 	display:inline-block;
 	width:6px;
 }
@@ -104,6 +104,7 @@ body {
 }
 
 .bang {
+  opacity:.5;
   display:none;  	
   /*transition: transform ; */ 
   transform: scale(6);
@@ -125,9 +126,17 @@ body {
 	display:inline-block;
 	background-color:white;
 	border:solid black 1px;
-	width:60px;
+	width:40px;
 	height:20px;
 	text-align:right;
+}
+#level.outText {
+	width:20px;
+	text-align:center;
+	color:red;
+}
+#score.outText , #time.outText {
+	width:50px;
 }
 .gap {
 	display:inline-block;

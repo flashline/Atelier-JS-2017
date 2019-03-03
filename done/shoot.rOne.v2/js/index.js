@@ -1,23 +1,25 @@
 // main
+
 // contants
 const CANNON_STEP=6 ; const CANNON_BALL_SPEED=6;
 // easy 	 : const LEVEL=1 ; const TARGET_LOOP=8*1000; const START_SCORE=100; const SUCCESS_SCORE=50; TIME_SCORE=10 ;
 // middle 	 : const LEVEL=2 ; const TARGET_LOOP=6*1000; const START_SCORE=80; const SUCCESS_SCORE=50; TIME_SCORE=10 ;
 // difficult : const LEVEL=3 ; const TARGET_LOOP=4*1000; const START_SCORE=80; const SUCCESS_SCORE=30; TIME_SCORE=10 ;
-const LEVEL=1 ; const TARGET_LOOP=6*1000; const SUCCESS_SCORE=30; FAILURE_SCORE=10 ; 
-var levels=	[	{num:1,targetLoop:8*1000},
-				{num:2,targetLoop:6*1000},
-				{num:3,targetLoop:4*1000},
-				{num:4,targetLoop:3*1000},
-				{num:5,targetLoop:2*1000}
+
+//const SUCCESS_SCORE=30; FAILURE_SCORE=10 ; 
+var levels=	[	{num:1,targetLoop:5.0,	goal:6,	failCause:3,	successScore:30, 	failureScore:15	}, 
+				{num:2,targetLoop:4.0,	goal:7,	failCause:6,	successScore:50, 	failureScore:10	}, 
+				{num:3,targetLoop:3.7,	goal:8,	failCause:8,	successScore:100,	failureScore:5	},
+				{num:4,targetLoop:3.3,	goal:9,	failCause:10,	successScore:150,	failureScore:3	},
+				{num:5,targetLoop:3.0,			failCause:12,	successScore:200,	failureScore:0	} 
 			];
 var currentLevel=0;
 //
 $("play").addEventListener('click',onPlay);
 // global vars
-var successCount, score, duration, successIdInterval,timeIdInterval, start;
+var successCount, score, duration, successIdInterval,timeIdInterval, start, blinkCount;
 var target,targetIdInterval,cannon,ballProtoElem,nextBallNum,gameIsOver,ballSize,failureCount;
-var maxScore=0;
+var maxScore=0;blinkCount=0;
 displayLegend();
 /// Target
 target={};
@@ -48,11 +50,12 @@ function onPlay (e) {
 			duration=(Date.now()-start)/1000;
 			$("time").innerHTML=Math.round(duration);			
 			$("score").innerHTML=score;	
+			$("level").innerHTML=levels[currentLevel].num;				
 			
 		},1000
 	);	
 	targetShow();
-	targetIdInterval=window.setInterval(targetRefresh,levels[currentLevel].targetLoop);	
+	targetIdInterval=window.setInterval(targetRefresh,levels[currentLevel].targetLoop*1000);	
 	targetRefresh ();	
 	
 	/// Listeners adding
@@ -60,10 +63,10 @@ function onPlay (e) {
 }
 /// end func
 function gameOver () {
-	/*$("score").innerHTML=score;*/
-	$("level").innerHTML=levels[currentLevel].num;
+	$("endLevel").innerHTML=levels[currentLevel].num;
 	gameIsOver=true;
 	targetHide();
+	//$("maxScore").innerHTML=Math.round(maxScore/duration*100); 
 	$("maxScore").innerHTML=maxScore;
 	$("play").innerHTML="Replay";
 	$("play").style.display="inline";
@@ -76,11 +79,11 @@ function gameOver () {
 function onKeyDown (e) {	
 	//left
 	if (e.keyCode==37 && cannon.x>0) {
-		canonMove(-CANNON_STEP);
+		canonMove(-CANNON_STEP);		
 	}
 	//right
 	else if (e.keyCode==39 && cannon.x<600-30) {
-		canonMove(+CANNON_STEP);
+		canonMove(+CANNON_STEP);		
 	}	
 	else if (e.keyCode==32 || e.keyCode==38 ) {
 		ballShoot(); 
@@ -89,29 +92,48 @@ function onKeyDown (e) {
 /// Target func
 function targetRefresh () {
 	targetShow ();
-	target.x=Math.floor(Math.random() * (600-20) );
+	target.x=Math.floor(Math.random() * 400 + 100 );
 	target.y=Math.floor(Math.random() * 200 + 50 );
 	target.elem.style.left=target.x+"px";
 	target.elem.style.top=target.y+"px";
 	//
-	score=(score>FAILURE_SCORE)?score-FAILURE_SCORE:0; 	
-	//if (score==0) gameOver();
+	var fs=levels[currentLevel].failureScore; score=(score>fs)?score-fs:0; 	
+	
 	$("success").innerHTML=successCount;
-	$("failure").innerHTML=failureCount;	
-	if ((failureCount-successCount)>3) gameOver(); 
-	else if (currentLevel===0 && (successCount-failureCount)>3 ||
-			 currentLevel===1 && (successCount-failureCount)>6 ||
-			 currentLevel===2 && (successCount-failureCount)>8 ||
-			 currentLevel===3 && (successCount-failureCount)>10
-			) 
-	{
+	$("failure").innerHTML=failureCount;
+	if ((failureCount-successCount)>levels[currentLevel].failCause) gameOver(); 	
+
+	else if (currentLevel<4 && (successCount-failureCount)>levels[currentLevel].goal ) {
 		currentLevel++; 
+		var start = null;
+		blinkCount=0;
+		blink(1,0);
 		failureCount=0; 
 		successCount=0 ;
-		log("level "+levels[currentLevel].num);
 	}
 	failureCount++;
 };
+
+function blink(swap,timestamp) {	
+	if ((Math.floor(timestamp/100)*100)%200==0) {		
+		swap*=-1;
+		if (swap>0) {
+			bgColor="#e87";
+		}
+		else {
+			bgColor="#ffe";
+		}
+		$("level").style.backgroundColor=bgColor;		
+	}	
+	blinkCount++;	
+	if (blinkCount<100) {
+		
+		window.requestAnimationFrame(function (timestamp) {	blink(swap,timestamp) }  );	
+	}
+	else {		
+		$("level").style.backgroundColor="white";		
+	}	
+}
 function targetShow () {
 	target.elem.style.visibility="visible";
 };
@@ -187,10 +209,10 @@ function isCollision (t,b) {
 		);
 		failureCount--;
 		window.clearInterval(targetIdInterval);
-		targetIdInterval=window.setInterval(targetRefresh,levels[currentLevel].targetLoop);	
-		targetRefresh ();	
+		targetIdInterval=window.setInterval(targetRefresh,levels[currentLevel].targetLoop*1000);	
+		targetRefresh ();		
 		successCount++;	
-		score+=SUCCESS_SCORE;//Math.round(successCount/duration*1000);
+		score+=levels[currentLevel].successScore ;
 		maxScore=Math.max(maxScore,score);
 		$("score").innerHTML=score;	
 		$("success").innerHTML=successCount;
