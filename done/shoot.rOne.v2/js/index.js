@@ -1,12 +1,7 @@
 // main
-
 // contants
 const CANNON_STEP=6 ; const CANNON_BALL_SPEED=6;
-// easy 	 : const LEVEL=1 ; const TARGET_LOOP=8*1000; const START_SCORE=100; const SUCCESS_SCORE=50; TIME_SCORE=10 ;
-// middle 	 : const LEVEL=2 ; const TARGET_LOOP=6*1000; const START_SCORE=80; const SUCCESS_SCORE=50; TIME_SCORE=10 ;
-// difficult : const LEVEL=3 ; const TARGET_LOOP=4*1000; const START_SCORE=80; const SUCCESS_SCORE=30; TIME_SCORE=10 ;
-
-//const SUCCESS_SCORE=30; FAILURE_SCORE=10 ; 
+// global vars
 var levels=	[	{num:1,targetLoop:5.0,	goal:6,	failCause:3,	successScore:30, 	failureScore:15	}, 
 				{num:2,targetLoop:4.0,	goal:7,	failCause:6,	successScore:50, 	failureScore:10	}, 
 				{num:3,targetLoop:3.7,	goal:8,	failCause:8,	successScore:100,	failureScore:5	},
@@ -14,13 +9,13 @@ var levels=	[	{num:1,targetLoop:5.0,	goal:6,	failCause:3,	successScore:30, 	fail
 				{num:5,targetLoop:3.0,			failCause:12,	successScore:200,	failureScore:0	} 
 			];
 var currentLevel=0;
+var clk=new Clock();
+var maxScore=0;
+var blinkTime=30;
 //
-$("play").addEventListener('click',onPlay);
-// global vars
-var successCount, score, duration, successIdInterval,timeIdInterval, start, blinkCount;
+var successCount, score, duration, successIdInterval,timeIdInterval, start;
 var target,targetIdInterval,cannon,ballProtoElem,nextBallNum,gameIsOver,ballSize,failureCount;
-var maxScore=0;blinkCount=0;
-displayLegend();
+//
 /// Target
 target={};
 target.elem=$("target");
@@ -36,9 +31,13 @@ ballProtoElem=$("ballProto");
 ballSize=ballProtoElem.offsetWidth+(CANNON_STEP/2);
 nextBallNum=0;
 //
+displayLegend();
+//events adding
+$("play").addEventListener('click',onPlay);
+//
 // functions
 /// start func
-function onPlay (e) {   
+function onPlay (e) {
 	failureCount=0; 
 	$("play").style.display="none";
 	$("gameOver").style.display="none";
@@ -75,6 +74,32 @@ function gameOver () {
 	window.clearInterval(targetIdInterval);
 	document.removeEventListener("keydown",onKeyDown);
 }
+// success func
+function success (ball) {		
+		$("bang").style.display="block";
+		$("win").style.display="block";
+		$("win").style.left=""+(ball.x-10)+"px";
+		$("win").style.top=""+(ball.y-4)+"px";
+		$("bang").style.left=""+ball.x+"px";
+		$("bang").style.top=""+ball.y+"px";
+		$("main").removeChild(ball.elem);
+		successIdInterval=window.setInterval(function () {	
+				$("bang").style.display="none" ;  
+				$("win").style.display="none" ; 
+				window.clearInterval(successIdInterval);				
+			},2000
+		);
+		failureCount--;
+		window.clearInterval(targetIdInterval);
+		targetIdInterval=window.setInterval(targetRefresh,levels[currentLevel].targetLoop*1000);	
+		targetRefresh ();
+		successCount++;	
+		score+=levels[currentLevel].successScore ;
+		maxScore=Math.max(maxScore,score);
+		$("score").innerHTML=score;	
+		$("success").innerHTML=successCount;
+		
+}
 /// listeners
 function onKeyDown (e) {	
 	//left
@@ -92,8 +117,8 @@ function onKeyDown (e) {
 /// Target func
 function targetRefresh () {
 	targetShow ();
-	target.x=Math.floor(Math.random() * 400 + 100 );
-	target.y=Math.floor(Math.random() * 200 + 50 );
+	target.x=Math.floor(Math.random() * 450 + 50 );
+	target.y=Math.floor(Math.random() * 150 + 100 );
 	target.elem.style.left=target.x+"px";
 	target.elem.style.top=target.y+"px";
 	//
@@ -106,33 +131,18 @@ function targetRefresh () {
 	else if (currentLevel<4 && (successCount-failureCount)>levels[currentLevel].goal ) {
 		currentLevel++; 
 		var start = null;
-		blinkCount=0;
-		blink(1,0);
+		blink();
 		failureCount=0; 
 		successCount=0 ;
 	}
 	failureCount++;
 };
-
-function blink(swap,timestamp) {	
-	if ((Math.floor(timestamp/100)*100)%200==0) {		
-		swap*=-1;
-		if (swap>0) {
-			bgColor="#e87";
-		}
-		else {
-			bgColor="#ffe";
-		}
-		$("level").style.backgroundColor=bgColor;		
-	}	
-	blinkCount++;	
-	if (blinkCount<100) {
-		
-		window.requestAnimationFrame(function (timestamp) {	blink(swap,timestamp) }  );	
-	}
-	else {		
-		$("level").style.backgroundColor="white";		
-	}	
+function blink() {
+	clk.toggle(.05,	function () {$("level").style.backgroundColor="#e87";},
+					function () {$("level").style.backgroundColor="#ffe";},								  
+					blinkTime,
+					function () {$("level").style.backgroundColor="#fff";}
+				);	
 }
 function targetShow () {
 	target.elem.style.visibility="visible";
@@ -166,7 +176,7 @@ function ballShoot () {
 function ballMove(ball) { 	
 	ball.y-=CANNON_BALL_SPEED ;
 	ballRefresh(ball);
-	if (isCollision (target,ball) && !gameIsOver) success (ball); 
+	if (isCollision (target,ball,3) && !gameIsOver) success (ball); 
 	else if (ball.y>-30) {		
 		window.requestAnimationFrame(function () { ballMove(ball); });	
 	}
@@ -177,9 +187,9 @@ function ballRefresh (ball) {
 	ball.elem.style.top =ball.y+"px";	
 };
 /// others func
-function isCollision (t,b) {		
+function isCollision (t,b,shift) {		
 	var hit = (
-		t.x>=b.x &&
+		t.x+shift>=b.x &&
 		t.x+t.w<=b.x+b.w &&
 		t.y>=b.y &&
 		t.y+t.h<=b.y+b.h
@@ -193,32 +203,7 @@ function isCollision (t,b) {
 	}*/
 	return hit;
 }
- function success (ball) {		
-		$("bang").style.display="block";
-		$("win").style.display="block";
-		$("win").style.left=""+(ball.x-10)+"px";
-		$("win").style.top=""+(ball.y-4)+"px";
-		$("bang").style.left=""+ball.x+"px";
-		$("bang").style.top=""+ball.y+"px";
-		$("main").removeChild(ball.elem);
-		successIdInterval=window.setInterval(function () {	
-				$("bang").style.display="none" ;  
-				$("win").style.display="none" ; 
-				window.clearInterval(successIdInterval);				
-			},2000
-		);
-		failureCount--;
-		window.clearInterval(targetIdInterval);
-		targetIdInterval=window.setInterval(targetRefresh,levels[currentLevel].targetLoop*1000);	
-		targetRefresh ();		
-		successCount++;	
-		score+=levels[currentLevel].successScore ;
-		maxScore=Math.max(maxScore,score);
-		$("score").innerHTML=score;	
-		$("success").innerHTML=successCount;
-		
-}
-
+ 
 /// util func
 function displayLegend () {
 	log("After click on Play button, use ");
@@ -227,5 +212,4 @@ function displayLegend () {
 }
 function log (o) {$("info").innerHTML+=o+"<br/>";}
 function $(s) {return document.getElementById(s);}
-
 
